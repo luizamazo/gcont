@@ -44,9 +44,9 @@ paths:
           required: true
           schema:
             type: string
-        - name: valorPlanejadoExercicio
+        - name: valorEmpenho
           in: path
-          description: Valor planejado para o exercício do contrato
+          description: Valor do empenho
           required: true
           schema:
             type: number
