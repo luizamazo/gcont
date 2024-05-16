@@ -28,7 +28,13 @@ paths:
       parameters:
         - name: numeroIdentificador
           in: path
-          description: Número Identificador do Contrato
+          description: Número identificador do contrato
+          required: true
+          schema:
+            type: string
+        - name: numeroVersionamento
+          in: path
+          description: Número de versionamento do contrato
           required: true
           schema:
             type: string
@@ -65,8 +71,7 @@ paths:
               example:
                 exception: ContratoNaoEncontradoException
                 mensagem: >-
-                  O número de contrato informado não é válido. Verifique e tente
-                  novamente.
+                  O número do identificador informado não é válido. Verifique e tente novamente.
         '422':
           description: Dados não processados corretamente.
           content:
@@ -76,13 +81,19 @@ paths:
                   value:
                     exception: SomaEmpenhosUltrapassaValorPlanejadoException
                     mensagem: >-
-                      Não foi possível cadastrar o empenho pois as somas dos
-                      empenhos ultrapassa o valor planejado para o exercício.
+                      Não foi possível cadastrar o empenho pois as somas dos empenhos 
+                      ultrapassa o valor planejado para o exercício.
                 Dotação não correspondente:
                   value:
                     exception: DotacaoNaoCorrespondenteException
                     mensagem: >-
-                      A dotação informada não corresponde à dotação do contrato.
+                      A dotação informada não corresponde à nenhuma dotação do contrato. 
+                      Por favor, verifique e tente novamente.
+                Fornecedor não correspondente:
+                  value:
+                    exception: FornecedorNaoCorrespondenteException
+                    mensagem: >-
+                      O numero do CNPJ informado não corresponde a nenhum fornecedor do contrato. 
                       Por favor, verifique e tente novamente.
   /validacao-anulacao-empenho:
     get:
@@ -99,30 +110,47 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: numeroIdentificador
+          in: path
+          description: Número identificador do contrato
+          required: true
+          schema:
+            type: string
+        - name: numeroVersionamento
+          in: path
+          description: Número de versionamento do contrato
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: Requisição realizada com sucesso.
           content:
             application/json:
               example:
-                mensagem: Empenho pode ser anulado.
+                mensagem: Validação realizada com sucesso. Anulação de empenho validado.
         '404':
           description: Empenho não encontrado no contratos
           content:
             application/json:
-              example:
-                exception: EmpenhoNaoEncontradoException
-                mensagem: >-
-                  O empenho informado não foi encontrado no sistema de
-                  contratos.
+              examples:
+                  Empenho não encontrado:
+                    value:
+                      exception: EmpenhoNaoEncontradoException
+                      mensagem: >-
+                        O número do ID do empenho informado não é válido. Verifique e tente novamente.  
+                  Contrato não encontrado:
+                    value:
+                      exception: ContratoNaoEncontradoException
+                      mensagem: >-
+                        O número do identificador informado não é válido. Verifique e tente novamente.
         '422':
           description: Dados não processados corretamente.
           content:
             application/json:
               examples:
-                Empenho vinculado à atesto:
+                Empenho vinculado à documento fiscal:
                   value:
-                    exception: EmpenhoVinculadoAtestoException
+                    exception: EmpenhoVinculadoADocumentoFiscalException
                     mensagem: >-
-                      O empenho não pode ser anulado pois está vinculado ao
-                      atesto nº XXX.
+                      O empenho não pode ser anulado pois está vinculado a um documento fiscal.
